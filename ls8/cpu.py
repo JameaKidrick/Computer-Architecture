@@ -2,6 +2,10 @@
 
 import sys
 
+# Parse the command line
+
+# print(sys.argv[1])
+
 class CPU:
     """Main CPU class."""
 
@@ -9,9 +13,10 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 9
-        self.hlt = 0b00000001
-        self.ldi = 0b10000010
-        self.prn = 0b01000111
+        self.hlt = int('00000001', 2)
+        self.ldi = int('10000010', 2)
+        self.prn = int('01000111', 2)
+        self.mul = int('10100010', 2)
         # LDI - load "immediate", store a value in a register, or "set this register to this value".
         # 10000010 00000rrr iiiiiiii
         # 82 0r ii
@@ -43,21 +48,43 @@ class CPU:
 
         address = 0
 
-        # For now, we've just hardcoded a program:
+        # # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
+
+        # OPEN FILE
+        if len(sys.argv) == 2:
+            program_filename = sys.argv[1]
+            with open(program_filename) as f:
+                # LOOP THROUGH EACH LINE IN THE FILE
+                for line in f:
+                    # SPLIT AT ANY POINT THERE IS A #
+                    line = line.split('#')
+                    # REMOVE THE FIRST PART OF THE SPLIT (EVERYTHING BEFORE THE #)
+                    line = line[0].strip()
+
+                    # IF THE LINE IS EMPTY, CONTINUE
+                    if line == '':
+                        continue
+
+                    # CONVERT LINE TO INTEGER AND ADD LINE TO ADDRESS
+                    self.ram[address] = (int(line, 2))
+                    address += 1
+        else:
+            print('File undefined: Please input `cpu.py [file_name].py` to define the file you want to run.')
+            exit()
 
 
     def alu(self, op, reg_a, reg_b):
@@ -95,22 +122,24 @@ class CPU:
         Using `ram_read()`, read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and `operand_b` in case the instruction needs them.
         Then, depending on the value of the opcode, perform the actions needed for the instruction per the LS-8 spec.
         After running code for any particular instruction, the `PC` needs to be updated to point to the next instruction for the next iteration of the loop in `run()`.
-        The number of bytes an instruction uses can be determined from the two high bits (bits 6-7) of the instruction opcode. See the LS-8 spec for details.
-        Example: 10000010 bits 6-7 are 10 which is 2 in base 10
-
         '''
         pc = 0
 
-        operand_a = self.ram[pc + 1]
-        operand_b = self.ram[pc + 2]
-
         while True:
+            operand_a = self.ram[pc + 1]
+            operand_b = self.ram[pc + 2]
             if self.ram[pc] == self.ldi: # LDI
                 '''
                 Set the value of a register to an integer.
                 '''
                 # pc += 0b10
                 self.ram_write(operand_b, operand_a)
+                pc += 3
+            elif self.ram[pc] == self.mul: # MUL
+                '''
+                Multiply the values in two registers together and store the result in registerA
+                '''
+                self.ram_write(self.ram_read(operand_a) * self.ram_read(operand_b), operand_a)
                 pc += 3
             elif self.ram[pc] == self.prn: # PRN
                 '''

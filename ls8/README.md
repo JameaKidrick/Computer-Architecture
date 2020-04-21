@@ -257,7 +257,7 @@ Extend your LS8 emulator to support the following program:
 00000001 # HLT
 ```
 
-One you run it with `python3 ls8.py examples/mult.ls8`, you should see:
+Once you run it with `python3 ls8.py examples/mult.ls8`, you should see:
 
 ```
 72
