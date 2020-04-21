@@ -57,6 +57,8 @@ python3 ls8.py
 
 but you'll have to implement those three above instructions first!
 
+_______________________________________________________________________________________
+
 ## Step 0: IMPORTANT: inventory what is here!
 
 * Make a list of files here.
@@ -64,6 +66,18 @@ but you'll have to implement those three above instructions first!
 * Note what has been implemented, and what hasn't.
 * Read this whole file.
 * Skim the spec.
+
+### File Inventory
+* /ls8/examples
+  * Examples to be used as tests as we go through assignments
+* /ls8/cpu.py
+  * File with CPU class that has methods set up for loading, printing, adding, and running cpu
+* /ls8/ls8.py
+  * File used for running cpu.py
+* /ls8/README.md
+  * YOU ARE HERE
+
+_______________________________________________________________________________________
 
 ## Step 1: Add the constructor to `cpu.py`
 
@@ -80,6 +94,8 @@ Also add properties for any internal registers you need, e.g. `PC`.
 
 Later on, you might do further initialization here, e.g. setting the initial
 value of the stack pointer.
+
+_______________________________________________________________________________________
 
 ## Step 2: Add RAM functions
 
@@ -102,6 +118,8 @@ We'll make use of these helper function later.
 
 Later on, you might do further initialization here, e.g. setting the initial
 value of the stack pointer.
+
+_______________________________________________________________________________________
 
 ## Step 3: Implement the core of `CPU`'s `run()` method
 
@@ -127,6 +145,8 @@ to point to the next instruction for the next iteration of the loop in `run()`.
 The number of bytes an instruction uses can be determined from the two high bits
 (bits 6-7) of the instruction opcode. See the LS-8 spec for details.
 
+_______________________________________________________________________________________
+
 ## Step 4: Implement the `HLT` instruction handler
 
 Add the `HLT` instruction definition to `cpu.py` so that you can refer to it by
@@ -139,12 +159,16 @@ you loaded.
 We can consider `HLT` to be similar to Python's `exit()` in that we stop
 whatever we are doing, wherever we are.
 
+_______________________________________________________________________________________
+
 ## Step 5: Add the `LDI` instruction
 
 This instruction sets a specified register to a specified value.
 
 See the LS-8 spec for the details of what this instructions does and its opcode
 value.
+
+_______________________________________________________________________________________
 
 ## Step 6: Add the `PRN` instruction
 
@@ -153,6 +177,8 @@ the LS-8 spec.
 
 *At this point, you should be able to run the program and have it print `8` to
 the console!*
+
+_______________________________________________________________________________________
 
 ## Step 7: Un-hardcode the machine code
 
@@ -208,6 +234,8 @@ second argument:
 x = int("1010101", 2)  # Convert binary string to integer
 ```
 
+_______________________________________________________________________________________
+
 ## Step 8: Implement a Multiply and Print the Result
 
 Extend your LS8 emulator to support the following program:
@@ -229,7 +257,7 @@ Extend your LS8 emulator to support the following program:
 00000001 # HLT
 ```
 
-One you run it with `python3 ls8.py examples/mult.ls8`, you should see:
+Once you run it with `python3 ls8.py examples/mult.ls8`, you should see:
 
 ```
 72
@@ -240,6 +268,8 @@ Check the LS-8 spec for what the `MUL` instruction does.
 > Note: `MUL` is the responsiblity of the ALU, so it would be nice if your code
 > eventually called the `alu()` function with appropriate arguments to get the
 > work done.
+
+_______________________________________________________________________________________
 
 ## Step 9: Beautify your `run()` loop
 
@@ -288,6 +318,8 @@ c = Foo()
 c.run()
 ```
 
+_______________________________________________________________________________________
+
 ## Step 10: Implement System Stack
 
 All CPUs manage a _stack_ that can be used to store information temporarily.
@@ -309,6 +341,8 @@ If you run `python3 ls8.py examples/stack.ls8` you should see the output:
 4
 1
 ```
+
+_______________________________________________________________________________________
 
 ## Step 11: Implement Subroutine Calls
 
@@ -348,6 +382,8 @@ If you run `python3 ls8.py examples/call.ls8` you should see the output:
 36
 60
 ```
+
+_______________________________________________________________________________________
 
 ## Stretch Goal: Timer Interrupts
 
