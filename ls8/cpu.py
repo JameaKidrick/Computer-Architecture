@@ -7,7 +7,36 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0] * 256
+        self.reg = [0] * 9
+        self.hlt = 0b00000001
+        self.ldi = 0b10000010
+        self.prn = 0b01000111
+        # LDI - load "immediate", store a value in a register, or "set this register to this value".
+        # 10000010 00000rrr iiiiiiii
+        # 82 0r ii
+        # PRN - a pseudo-instruction that prints the numeric value stored in a register.
+        # 01000111 00000rrr
+        # 47 0r
+        # HLT - halt the CPU and exit the emulator.
+        # 00000001 
+        # 01
+
+    def ram_read(self, mar):
+        '''
+        Accepts the address to read and return the value stored there
+        Memory Address Register (mar) - contains the address that is being read or written to.
+        '''
+        return self.reg[mar]
+
+    def ram_write(self, mdr, mar):
+        '''
+        Accepts a value to write, and the address to write it to
+        Memory Data Register (mdr) - contains the data that was read or the data to write
+        '''
+        # print(f'BEFORE WRITING {mdr}: {self.reg[mar]}')
+        self.reg[mar] = mdr
+        # print(f'AFTER WRITING {mdr}: {self.reg[mar]}')
 
     def load(self):
         """Load a program into memory."""
@@ -61,5 +90,38 @@ class CPU:
         print()
 
     def run(self):
-        """Run the CPU."""
-        pass
+        '''
+        Run the CPU.
+        Using `ram_read()`, read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and `operand_b` in case the instruction needs them.
+        Then, depending on the value of the opcode, perform the actions needed for the instruction per the LS-8 spec.
+        After running code for any particular instruction, the `PC` needs to be updated to point to the next instruction for the next iteration of the loop in `run()`.
+        The number of bytes an instruction uses can be determined from the two high bits (bits 6-7) of the instruction opcode. See the LS-8 spec for details.
+        Example: 10000010 bits 6-7 are 10 which is 2 in base 10
+
+        '''
+        pc = 0
+
+        operand_a = self.ram[pc + 1]
+        operand_b = self.ram[pc + 2]
+
+        while True:
+            if self.ram[pc] == self.ldi: # LDI
+                '''
+                Set the value of a register to an integer.
+                '''
+                # pc += 0b10
+                self.ram_write(operand_b, operand_a)
+                pc += 3
+            elif self.ram[pc] == self.prn: # PRN
+                '''
+                Print numeric value stored in the given register.
+
+                Print to the console the decimal integer value that is stored in the given register.
+                '''
+                print(self.ram_read(operand_a))
+                pc += 2
+            elif self.ram[pc] == self.hlt: # HLT
+                '''
+                Halt the CPU (and exit the emulator).
+                '''
+                return False
